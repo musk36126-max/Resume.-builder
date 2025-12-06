@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeFast – Free Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px;color:#333}
+        .container{max-width:1200px;margin:20px auto;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+        .form-section,.preview-section{background:#fff;border-radius:16px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+        h1{text-align:center;color:#fff;margin:20px 0;font-size:2.5rem}
+        input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;font-size:16px}
+        button{background:#28a745;color:#fff;padding:16px 40px;border:none;border-radius:12px;font-size:18px;margin-top:20px;cursor:pointer}
+        button:hover{background:#218838}
+        .skills-container{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+        .skill-tag{background:#667eea;color:#fff;padding:8px 16px;border-radius:30px;font-size:14px;cursor:pointer}
+        @media(max-width:900px){.container{grid-template-columns:1fr}}
+        @media print{#no-print{display:none}body{background:white}}
+    </style>
+</head>
+<body>
+    <h1>ResumeFast – Build Your Resume in 2 Minutes</h1>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Your Information</h2>
+            <input type="text" id="fullName" placeholder="Full Name" oninput="updatePreview()">
+            <input type="text" id="jobTitle" placeholder="Job Title" oninput="updatePreview()">
+            <input type="email" id="email" placeholder="Email" oninput="updatePreview()">
+            <input type="tel" id="phone" placeholder="Phone" oninput="updatePreview()">
+            <textarea id="about" rows="3" placeholder="Professional Summary" oninput="updatePreview()"></textarea>
+
+            <h3>Skills (press Enter)</h3>
+            <input type="text" id="skillInput" placeholder="Type skill + Enter" onkeydown="addSkill(event)">
+            <div class="skills-container" id="skillsList"></div>
+
+            <textarea id="education" rows="3" placeholder="Education" oninput="updatePreview()"></textarea>
+            <textarea id="experience" rows="4" placeholder="Experience" oninput="updatePreview()"></textarea>
+        </div>
+
+        <div class="preview-section">
+            <h2>Live Preview</h2>
+            <div id="resume" style="background:#fff;padding:40px;border-radius:12px;min-height:900px;box-shadow:0 4px 20px rgba(0,0,0,.1);">
+                <div style="text-align:center;margin-bottom:40px">
+                    <h1 style="font-size:3rem;color:#667eea">Your Name</h1>
+                    <p style="font-size:1.4rem;color:#555">Professional Title</p>
+                    <p>email@example.com | +123 456 7890</p>
+                </div>
+                <p style="line-height:1.8"><strong>Summary</strong><br><span id="prevAbout">Start typing...</span></p>
+                <p style="margin-top:20px;line-height:1.8"><strong>Skills</strong><br><div id="prevSkills"></div></p>
+                <p style="margin-top:20px;line-height:1.8"><strong>Education</strong><br><span id="prevEducation">-</span></p>
+                <p style="margin-top:20px;line-height:1.8"><strong>Experience</strong><br><span id="prevExperience">-</span></p>
+            </div>
+
+            <div id="no-print">
+                <button onclick="window.print()">Save as PDF (100% works!)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let skills = [];
+
+        function addSkill(e){
+            if(e.key==="Enter"){
+                let val = document.getElementById("skillInput").value.trim();
+                if(val && !skills.includes(val)){
+                    skills.push(val);
+                    let tag = document.createElement("span");
+                    tag.className="skill-tag";
+                    tag.innerHTML = val + " ×";
+                    tag.onclick = ()=>{ skills=skills.filter(s=>s!==val); tag.remove(); updatePreview(); };
+                    document.getElementById("skillsList").appendChild(tag);
+                    document.getElementById("skillInput").value="";
+                    updatePreview();
+                }
+            }
+        }
+
+        function updatePreview(){
+            document.querySelector("#resume h1").textContent = document.getElementById("fullName").value || "Your Name";
+            document.querySelector("#resume p:nth-of-type(1)").textContent = document.getElementById("jobTitle").value || "Professional Title";
+            document.querySelector("#resume p:nth-of-type(2)").textContent = 
+                `\( {document.getElementById("email").value || "email@example.com"} | \){document.getElementById("phone").value || "+123 456 7890"}`;
+            document.getElementById("prevAbout").textContent = document.getElementById("about").value || "Your summary...";
+            document.getElementById("prevEducation").textContent = document.getElementById("education").value || "-";
+            document.getElementById("prevExperience").textContent = document.getElementById("experience").value || "-";
+            document.getElementById("prevSkills").innerHTML = skills.map(s=>`<span class="skill-tag">${s}</span>`).join(" ");
+        }
+    </script>
+</body>
+                  </html>
